@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class Delivery : MonoBehaviour
 {
+    bool hasPackage = false;
+    SpriteRenderer spriteRenderer;
+
+    void Start() {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
     void OnCollisionEnter2D(Collision2D other)
     {
         Debug.Log("Ouch!");
@@ -11,13 +18,24 @@ public class Delivery : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Package")
+        if (other.tag == "Package" && !hasPackage)
         {
-            Debug.Log("Package Trigger eneterd!");
+            hasPackage = true;
+            Destroy(other.gameObject, 0); // delay: 0
+            
+            // change car color
+            spriteRenderer.color = new Color(255, 0, 0, 255);
+
+            Debug.Log("Package picked up");
         }
-        else if (other.tag == "Customer")
+        else if (other.tag == "Customer" && hasPackage)
         {
-            Debug.Log("Customer Has picked the package!");
+            hasPackage = false;
+            
+            // change car color
+            spriteRenderer.color = new Color(200, 200, 255, 255);
+
+            Debug.Log("Package delivered to the customer");
         }
     }
 }
